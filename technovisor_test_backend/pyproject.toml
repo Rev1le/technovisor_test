@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "ordering-dish-backend"
+version = "0.1.0"
+description = ""
+authors = ["Rev1le <r.nikiy@yandex.ru>"]
+readme = "README.md"
+packages = [{include = "ordering_dish_backend"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^4.2"
+djangorestframework = "^3.14.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry.scripts]
+django-manage = 'manage:main'
