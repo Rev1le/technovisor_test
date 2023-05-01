@@ -1,37 +1,50 @@
 <template>
-    <!--Модальное окно на кнопку-->
-    <button class="create_btn" @click="createOrder">Создать заказ</button>
+  <!--Модальное окно на кнопку-->
+  <div class="d-flex justify-content-center">
+    <button class="create_btn btn btn-primary" @click="switchShowDialog">Создать заказ</button>
+  </div>
 
-    <OrderDishesList/>
-    
-    <FormValid/>
+  <CreateModalWindow v-model:show="showDialog">
+    <div class="justify-content-center">
+      <FormValid/>
+    </div>
+  </CreateModalWindow>
+
+  <OrderDishesList />
+
 </template>
 
-
 <script>
-import OrderDishesList from '@/components/OrderDishesList.vue';
-import FormValid from '@/components/FormValid.vue';
+import OrderDishesList from "@/components/OrderDishesList.vue";
+import FormValid from "@/components/FormValid.vue";
+import CreateModalWindow from "@/components/CreateModalWindow.vue";
 
 export default {
-    name: "MainPageView",
+  name: "MainPageView",
 
-    components: {
-        OrderDishesList,
-        FormValid
+  components: {
+    CreateModalWindow,
+    OrderDishesList,
+    FormValid,
+  },
+
+  data() {
+    return {
+      // Контролирует отображение модального окна
+      showDialog: true,
+    };
+  },
+
+  methods: {
+    async createOrder() {
+      console.log("Создание заказа...");
     },
 
-    data() {
-        return {
-
-        }
+    switchShowDialog() {
+      this.showDialog = !this.showDialog;
     },
-
-    methods: {
-        async createOrder() {
-            console.log("Создание заказа...")
-        }
-    }
-}
+  },
+};
 </script>
 
 <style scoped>
@@ -44,7 +57,7 @@ export default {
   transition: 0.5s;
   color: #f8f9fa;
   background: #0ea2bd;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   text-decoration: none;
 }
 </style>

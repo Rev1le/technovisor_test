@@ -1,6 +1,6 @@
 <template>
 
-    <div class="list-group" v-for="order in orders">
+    <div class="list-group px" v-for="order in orders">
         <OrderDishesItem :order="order"/>
     </div>
 

@@ -13,8 +13,8 @@
             <p class="mb-1">Для {{ order.worker.name }} заказаны блюда:</p>
             
             <small class="text-muted">  
-                <ul v-for="dish in order.dishes">
-                    <li>{{ dish.title }}</li>
+                <ul class="list-group" v-for="dish in order.dishes">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">{{ dish.title }}</li>
                 </ul>
             </small>
 
