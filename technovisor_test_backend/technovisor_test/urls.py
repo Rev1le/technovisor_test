@@ -4,14 +4,16 @@ from django.urls import path, include
 from ordering_dish.views import (
     get_workers_list,
     get_dishes_list,
-    OrderDishesApiView
+    OrderApiView,
+    OrderApiList,
 )
 
 
 api_urls = [
     path('workers/', get_workers_list),
     path('dishes/', get_dishes_list),
-    path('create_order/', OrderDishesApiView.as_view())
+    path('orders/', OrderApiList.as_view()),#OrderApiView.as_view()),
+    path('create_order/', OrderApiList.as_view()),#OrderApiView.as_view())
 ]
 
 
