@@ -1,7 +1,7 @@
 from django.db import models
 
 
-# Создание абстрактного класса для корретной индексации в файле views.py
+# Создание абстрактного класса для исправления warning в файле views.py
 class BaseModel(models.Model):
     objects = models.Manager()
 
