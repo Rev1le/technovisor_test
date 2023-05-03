@@ -17,7 +17,7 @@ class Worker(BaseModel):
 
 
 class Dish(BaseModel):
-    title = models.CharField(max_length=128)
+    title = models.CharField(max_length=128, unique=True)
     composition = models.TextField(default="Нет информации о составе продукта")
     price = models.FloatField()
 
