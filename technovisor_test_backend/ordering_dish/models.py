@@ -32,3 +32,9 @@ class Order(BaseModel):
 
     def __str__(self):
         return self.worker.name
+
+    def display_dishes(self):
+        return ', '.join([dish.title for dish in self.dishes.all()[:3]])
+
+    display_dishes.short_description = 'Dish'
+
