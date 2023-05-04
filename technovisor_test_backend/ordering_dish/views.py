@@ -15,6 +15,21 @@ from .models import Worker, Dish, Order
 from .serializers import OrderSerializer
 
 
+def create_xlsx_reader_for_df(df):
+    bio = BytesIO()
+
+    with ExcelWriter(bio, mode="w") as writer:
+        df.to_excel(
+            writer,
+            engine='xlsxwriter',
+            index=False,
+            sheet_name="Sheet1"
+        )
+
+    bio.seek(0)
+    return bio
+
+
 def get_workers_list(request):
     workers_list = serializers.serialize("json", Worker.objects.all())
     return HttpResponse(workers_list, content_type="application/json")
@@ -45,12 +60,14 @@ def get_orders_to_xlsx(request):
     df = DataFrame(data=data_json)
 
     date_today = datetime.today()
+
     # today - (today - 1970)
     prev_month = date_today - (date_today - time_delta)
     prev_time = prev_month.replace(day=1)
 
     df['date'] = pd.to_datetime(df['date'])
     df = df[df["date"].between(prev_time, date_today, inclusive="both")]
+
     df["worker"] = df["worker"].transform(lambda worker: worker["name"])
     df["dishes"] = df["dishes"].transform(dishes_to_str)
 
@@ -65,28 +82,17 @@ def get_orders_to_xlsx(request):
     )
     df = df.sort_values(by=['Дата заказа'])
 
-    #Файловый дескриптор в памяти
-    bio = BytesIO()
-
-    with ExcelWriter(bio, mode="w") as writer:
-        df.to_excel(
-            writer,
-            engine='xlsxwriter',
-            index=False,
-            sheet_name="Sheet1"
-        )
-
-    bio.seek(0)
+    bio = create_xlsx_reader_for_df(df)
     workbook = bio.read()
 
     response = HttpResponse(workbook, content_type='application/xlsx')
-    filename = "report"
+    filename = "report_orders_on_timedelta"
     response['Content-Disposition'] = f"attachment; filename={filename}.xlsx"
 
     return response
 
 
-def get_orders_on_day_to_xlsx(request):
+def get_dishes_on_day_to_xlsx(request):
 
     def validation_date(date):
         format_date = "%Y-%m-%d"
@@ -97,15 +103,6 @@ def get_orders_on_day_to_xlsx(request):
         except ValueError:
             return None
 
-    def count_dishes(dishes_list):
-
-        dishes_set = set()
-
-        for dish in dishes_list:
-            dishes_set.add(dish)
-
-        print(dishes_set)
-
     print(request.GET)
     day_date_str = request.GET.get('date', '')
     day_date_valid_str = validation_date(day_date_str)
@@ -113,28 +110,35 @@ def get_orders_on_day_to_xlsx(request):
 
     df = DataFrame.from_dict(data_json)
     df = df[df['date'] == day_date_valid_str]
+    try:
+        dishes_list = df.groupby(['date'])['dishes'].sum().iloc[0]
+    except IndexError:
+        return HttpResponse("None", content_type='application/json')
 
-    dishes_list = df.groupby(['date'])['dishes'].sum().iloc[0]
-    #count = count_dishes(dishes_list)
     df_dishes = DataFrame(data=dishes_list)
     df_dishes = df_dishes.groupby(['title', 'price'])['price'].agg(['sum','count'])
+
+    # Создание итоговой суммы и запись её в отедльный столбец
     #df_dishes = pd.concat([df_dishes, pd.Series(['Итоговая сумма', df_dishes.groupby('sum').sum()])])
+
+    df_dishes.reset_index(inplace=True)
+    df_dishes = df_dishes.rename(
+        columns={
+            "title": "Название блюда",
+            "price": "Цена блюда",
+            "sum": "Сумма закупки",
+            "count": "Кол-во"
+        },
+        errors="raise"
+    )
     print(df_dishes)
 
-    bio = BytesIO()
+    bio = create_xlsx_reader_for_df(df_dishes)
 
-    with ExcelWriter(bio, mode="w") as writer:
-        df_dishes.to_excel(
-            writer,
-            engine='xlsxwriter',
-            sheet_name="Sheet1"
-        )
-
-    bio.seek(0)
     workbook = bio.read()
 
     response = HttpResponse(workbook, content_type='application/xlsx')
-    filename = "report"
+    filename = "report_dishes_on_date"
     response['Content-Disposition'] = f"attachment; filename={filename}.xlsx"
 
     return response

@@ -22,7 +22,7 @@ export default {
     async getReportSumDishes() {
       console.log("Получаем сумму блюд в дне");
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/v1/orders_on_day_xlsx?date=${this.inputDate}`,
+        `http://127.0.0.1:8000/api/v1/dishes_on_day_xlsx?date=${this.inputDate}`,
         { responseType: "arraybuffer" }
       );
 
