@@ -16,6 +16,7 @@ const useOrderStore = defineStore(
         },
 
         actions: {
+
             async reqGetAllOrders() {
                 console.log("Получение всех заказов...")
 
@@ -25,6 +26,7 @@ const useOrderStore = defineStore(
                     
                     if (response.status === 200) {
                         this.orders = response.data;
+                        this.saveToLocalStorage();
                         return this.orders
                     }
                 } 
@@ -32,6 +34,21 @@ const useOrderStore = defineStore(
                 catch (e) {
                     console.log("Ошибка при запросе всех заказов: ", e);
                 }
+            },
+
+            async saveToLocalStorage() {
+                const localStorage = window.localStorage;
+                localStorage.setItem('orders', this.orders);
+            },
+
+            async createOrder(data) {
+                console.log('Start');
+                const response = await axios.post(
+                    "http://127.0.0.1:8000/api/v1/create_order/", 
+                    data=data
+                );
+
+                console.log("Резщультат создания ордера", response);
             }
         }
     }

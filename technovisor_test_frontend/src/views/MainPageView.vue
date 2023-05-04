@@ -1,23 +1,57 @@
 <template>
-  <!--Модальное окно на кнопку-->
-  <div class="d-flex justify-content-center">
-    <button class="create_btn btn btn-primary" @click="switchShowDialog">Создать заказ</button>
-  </div>
+  <header class="d-flex justify-content-center py-3">
+    <ul class="nav nav-pills">
+      <li class="nav-item">
+        <button
+          class="create_btn btn btn-primary"
+          aria-current="page"
+          @click="switchShowCreateOrder"
+        >
+          Создать заказ
+        </button>
+      </li>
+      <li class="nav-item">
+        <button
+          class="create_btn btn btn-primary"
+          aria-current="page"
+          @click="switchShowReportDeltatime"
+        >
+          Отчет заказов за промежуток времени
+        </button>
+      </li>
+      <li class="nav-item">
+        <button
+          class="create_btn btn btn-primary"
+          aria-current="page"
+          @click="switchShowReportSumDishes"
+        >
+          Отчет суммирования блюд в заданный день
+        </button>
+      </li>
+    </ul>
+  </header>
 
-  <CreateModalWindow v-model:show="showDialog">
-    <div class="justify-content-center">
-      <FormValid/>
-    </div>
+  <CreateModalWindow v-model:show="showCreateOrder">
+    <FormValid />
+  </CreateModalWindow>
+
+  <CreateModalWindow v-model:show="showReportDeltatime">
+    <ReportDeltatime />
+  </CreateModalWindow>
+
+  <CreateModalWindow v-model:show="showReportSumDishes">
+    <ReportSumDishes />
   </CreateModalWindow>
 
   <OrderDishesList />
-
 </template>
 
 <script>
 import OrderDishesList from "@/components/OrderDishesList.vue";
 import FormValid from "@/components/FormValid.vue";
 import CreateModalWindow from "@/components/CreateModalWindow.vue";
+import ReportSumDishes from "@/components/ReportSumDishes.vue";
+import ReportDeltatime from "../components/ReportDeltatime.vue";
 
 export default {
   name: "MainPageView",
@@ -26,12 +60,17 @@ export default {
     CreateModalWindow,
     OrderDishesList,
     FormValid,
+    ReportSumDishes,
+    ReportDeltatime,
   },
 
   data() {
     return {
       // Контролирует отображение модального окна
-      showDialog: true,
+      showCreateOrder: false,
+      showReportDeltatime: false,
+      showReportSumDishes: false,
+      inputDate: "",
     };
   },
 
@@ -40,8 +79,16 @@ export default {
       console.log("Создание заказа...");
     },
 
-    switchShowDialog() {
-      this.showDialog = !this.showDialog;
+    switchShowCreateOrder() {
+      this.showCreateOrder = !this.showCreateOrder;
+    },
+
+    switchShowReportDeltatime() {
+      this.showReportDeltatime = !this.showReportDeltatime;
+    },
+
+    switchShowReportSumDishes() {
+      this.showReportSumDishes = !this.showReportSumDishes;
     },
   },
 };
