@@ -71,10 +71,10 @@ export default {
       },
     },
     async created() {
-        const dishes_response = await axios.get("http://127.0.0.1:8000/api/v1/dishes");
+        const dishes_response = await axios.get("http://127.0.0.1:8080/api/v1/dishes");
         this.dishes = dishes_response.data;
 
-        const workers_response = await axios.get("http://127.0.0.1:8000/api/v1/workers");
+        const workers_response = await axios.get("http://127.0.0.1:8080/api/v1/workers");
         this.workers = workers_response.data;
     },
 }
